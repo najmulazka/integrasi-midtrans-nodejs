@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="YOUR-CLIENT-KEY"></script>
+  </head>
+
+  <body>
+    <form>
+      <table>
+        <tr>
+          <td><label for="grossAmount">grossAmount</label></td>
+          <td><input type="number" id="grossAmount" name="grossAmount" required /></td>
+        </tr>
+        <tr>
+          <td><label for="firstName">firstName</label></td>
+          <td><input type="text" id="firstName" name="firstName" required /></td>
+        </tr>
+        <tr>
+          <td><label for="lastName">lastName</label></td>
+          <td><input type="text" id="lastName" name="lastName" required /></td>
+        </tr>
+        <tr>
+          <td><label for="email">email</label></td>
+          <td><input type="email" id="email" name="email" required /></td>
+        </tr>
+        <tr>
+          <td><label for="phone">phone</label></td>
+          <td><input type="tel" id="phone" name="phone" required /></td>
+        </tr>
+      </table>
+    </form>
+    <button id="pay-button" type="submit">Pay!</button>
+
+    <script type="text/javascript">
+      var payButton = document.getElementById('pay-button');
+      payButton.addEventListener('click', function () {
+        const grossAmount = document.getElementById('grossAmount').value;
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+
+        fetch('http://localhost:3000/bayar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            grossAmount,
+            firstName,
+            lastName,
+            email,
+            phone,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const transactionToken = data.transactionToken;
+            if (transactionToken) {
+              window.snap.pay(transactionToken);
+            } else {
+              console.error('Failed to get transaction token');
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
